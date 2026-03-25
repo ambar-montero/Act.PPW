@@ -1,0 +1,70 @@
+﻿@page "/diasmes"
+@rendermode InteractiveServer
+
+<h3>Conocer los día del mes</h3>
+
+<div class="mb-3">
+    <label>Mes</label>
+    <input type="number" class="form-control" @bind="mes" />
+</div>
+
+<div class="mb-3">
+    <label>Año</label>
+    <input type="number" class="form-control" @bind="anio" />
+</div>
+
+<br />
+
+<button class="btn btn-primary" @onclick="CalcularDias">
+    Calcular
+</button>
+
+<br /><br />
+
+@if (mostrarResultado)
+{
+    <h4>@resultado</h4>
+}
+
+@code {
+    int mes;
+    int anio;
+    int dias;
+    string resultado = "";
+    bool mostrarResultado = false;
+
+    void CalcularDias()
+    {
+        if (mes < 1 || mes > 12 || anio <= 0)
+        {
+            resultado = "Datos invalidos";
+            mostrarResultado = true;
+            return;
+        }
+        switch (mes)
+        {
+            case 1: case 3: case 5: case 7: case 8: case 10: case 12:
+                dias = 31;
+                break;
+
+            case 4: case 6: case 9: case 11:
+                dias = 30;
+                break;
+
+            case 2:
+                if (EsBisiesto(anio))
+                    dias = 29;
+                else
+                    dias = 28;
+                break;
+        }
+
+        resultado = $"El mes {mes} del año {anio} tiene {dias} días";
+        mostrarResultado = true;
+    }
+
+    bool EsBisiesto(int anio)
+    {
+        return (anio % 4 == 0 && anio % 100 != 0) || (anio % 400 == 0);
+    }
+}
