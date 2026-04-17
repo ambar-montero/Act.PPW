@@ -1,0 +1,80 @@
+﻿@page "/listas"
+@rendermode InteractiveServer
+
+<h3>Listas de numeros</h3>
+
+<div class="container">
+    
+    <div class="mb-3">
+        <label>Número 1</label>
+        <input type="number" class="form-control" @bind="numero1" />
+    </div>
+
+    <div class="mb-3">
+        <label>Número 2</label>
+        <input type="number" class="form-control" @bind="numero2" />
+    </div>
+
+    <button class="btn btn-primary" @onclick="Calcular">
+        Calcular
+    </button>
+
+    <br /> <br />
+
+    <div class="row">
+
+        <div class="col-6">
+            <h3>Pares</h3>
+
+            @foreach (var n in pares)
+            {
+                <div class="form-control mb-2">
+                    @n
+                </div>
+            }
+
+        </div>
+
+        <div class="col-6">
+            <h3>Impares</h3>
+
+            @foreach (var n in impares)
+            {
+                <div class="form-control mb-2">
+                    @n
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@code {
+
+    int numero1;
+    int numero2;
+
+    List<int> pares = new();
+    List<int> impares = new();
+
+    void Calcular()
+    {
+        pares.Clear();
+        impares.Clear();
+
+        int inicio = Math.Min(numero1, numero2);
+        int fin = Math.Max(numero1, numero2);
+
+        for (int i = inicio; i <= fin; i++)
+        {
+            if (i % 2 == 0)
+                pares.Add(i);
+            else
+                impares.Add(i);
+        }
+    }
+
+}
