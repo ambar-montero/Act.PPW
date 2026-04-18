@@ -1,0 +1,161 @@
+﻿@page "/canciones"
+@rendermode InteractiveServer
+
+<h3>Administrador de Canciones</h3>
+
+<div class="container">
+
+    <div class="mb-3">
+        <label>Nuevo título</label>
+        <input class="form-control" @bind="nuevoTitulo" />
+    </div>
+
+    <button class="btn btn-primary me-2" @onclick="AgregarTitulo">
+        Agregar
+    </button>
+
+    <button class="btn btn-secondary me-2" @onclick="OrdenAsc">
+        Orden A-Z
+    </button>
+
+    <button class="btn btn-secondary me-2" @onclick="OrdenDesc">
+        Orden Z-A
+    </button>
+
+    <br /><br />
+
+
+    <div class="mb-3">
+        <label>Filtro</label>
+        <input class="form-control" placeholder="Ej: summer"
+               @bind="filtro" />
+    </div>
+
+    <button class="btn btn-info" @onclick="AplicarFiltro">
+        Aplicar filtro
+    </button>
+
+    <button class="btn btn-warning ms-2" @onclick="QuitarFiltro">
+        Quitar filtro
+    </button>
+
+    <hr />
+
+    <!-- LISTA -->
+    <h4>Lista de canciones</h4>
+
+    @foreach (var titulo in listaVisible)
+    {
+        <div class="d-flex mb-2">
+
+            @if (titulo == tituloEditando)
+            {
+                <input class="form-control me-2"
+                       @bind="tituloModificado" />
+
+                <button class="btn btn-success me-2"
+                        @onclick="GuardarEdicion">
+                    Guardar
+                </button>
+            }
+            else
+            {
+                <div class="form-control me-2">
+                    @titulo
+                </div>
+
+                <button class="btn btn-warning me-2"
+                        @onclick="() => EditarTitulo(titulo)">
+                    Editar
+                </button>
+            }
+
+            <button class="btn btn-danger"
+                    @onclick="() => EliminarTitulo(titulo)">
+                Eliminar
+            </button>
+
+        </div>
+    }
+
+</div>
+
+@code {
+
+    string nuevoTitulo = "";
+    string filtro = "";
+
+    List<string> canciones = new();
+    List<string> listaVisible = new();
+
+    string tituloEditando = "";
+    string tituloModificado = "";
+
+    protected override void OnInitialized()
+    {
+        listaVisible = canciones;
+    }
+
+
+    void AgregarTitulo()
+    {
+        if (!string.IsNullOrWhiteSpace(nuevoTitulo))
+        {
+            canciones.Add(nuevoTitulo);
+            nuevoTitulo = "";
+            listaVisible = canciones;
+        }
+    }
+
+
+    void EliminarTitulo(string titulo)
+    {
+        canciones.Remove(titulo);
+        listaVisible = canciones;
+    }
+
+
+    void EditarTitulo(string titulo)
+    {
+        tituloEditando = titulo;
+        tituloModificado = titulo;
+    }
+
+    void GuardarEdicion()
+    {
+        int index = canciones.IndexOf(tituloEditando);
+
+        if (index >= 0)
+            canciones[index] = tituloModificado;
+
+        tituloEditando = "";
+        listaVisible = canciones;
+    }
+
+  
+    void OrdenAsc()
+    {
+        canciones = canciones.OrderBy(c => c).ToList();
+        listaVisible = canciones;
+    }
+
+    void OrdenDesc()
+    {
+        canciones = canciones.OrderByDescending(c => c).ToList();
+        listaVisible = canciones;
+    }
+
+
+    void AplicarFiltro()
+    {
+        listaVisible = canciones
+            .Where(c => c.ToLower().Contains(filtro.ToLower()))
+            .ToList();
+    }
+
+    void QuitarFiltro()
+    {
+        filtro = "";
+        listaVisible = canciones;
+    }
+}
