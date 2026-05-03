@@ -1,0 +1,116 @@
+﻿@page "/estudiantes"
+@rendermode InteractiveServer
+@using Act8.Models
+
+<h3>Administrar Estudiantes</h3>
+
+<EditForm Model="@nuevoEstudiante"
+          OnValidSubmit="GuardarEstudiante"
+          FormName="formEstudiantes">
+
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-2">
+        <label>Nombre:</label>
+
+        <InputText class="form-control"
+                   @bind-Value="nuevoEstudiante.Nombre" />
+
+        <!-- ✅ AQUÍ -->
+        <ValidationMessage For="@(() => nuevoEstudiante.Nombre)" />
+    </div>
+
+    <div class="mb-2">
+        <label>Correo:</label>
+
+        <InputText class="form-control"
+                   @bind-Value="nuevoEstudiante.Correo" />
+
+        <!-- ✅ AQUÍ -->
+        <ValidationMessage For="@(() => nuevoEstudiante.Correo)" />
+    </div>
+
+    <div class="mb-2">
+        <label>Calificación:</label>
+
+        <InputNumber class="form-control"
+                     @bind-Value="nuevoEstudiante.Calificacion" />
+
+        <!-- ✅ AQUÍ -->
+        <ValidationMessage For="@(() => nuevoEstudiante.Calificacion)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Guardar
+    </button>
+
+</EditForm>
+
+<hr />
+
+<h4>Lista de Estudiantes</h4>
+
+@if (listaEstudiantes.Count == 0)
+{
+    <p>No hay estudiantes registrados</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Calificación</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var estudiante in listaEstudiantes)
+            {
+                <tr>
+                    <td>@estudiante.Nombre</td>
+                    <td>@estudiante.Correo</td>
+                    <td>@estudiante.Calificacion</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm"
+                                @onclick="() => EliminarEstudiante(estudiante)">
+                            🗑️
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    private Estudiante nuevoEstudiante = new Estudiante();
+
+    private List<Estudiante> listaEstudiantes = new List<Estudiante>();
+
+    private void GuardarEstudiante()
+    {
+        listaEstudiantes.Add(new Estudiante
+        {
+            Nombre = nuevoEstudiante.Nombre,
+            Correo = nuevoEstudiante.Correo,
+            Calificacion = nuevoEstudiante.Calificacion
+        });
+
+        LimpiarFormulario();
+    }
+
+    private void EliminarEstudiante(Estudiante estudiante)
+    {
+        listaEstudiantes.Remove(estudiante);
+    }
+
+    private void LimpiarFormulario()
+    {
+        nuevoEstudiante = new Estudiante();
+    }
+}
